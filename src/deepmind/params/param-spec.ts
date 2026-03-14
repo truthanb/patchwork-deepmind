@@ -20,6 +20,8 @@ const PARAM_OVERRIDES: Record<string, Pick<DeepMindParamSpec, 'rawMin' | 'rawMax
   'fx2.outputGain': { rawMin: 0, rawMax: 150 },
   'fx3.outputGain': { rawMin: 0, rawMax: 150 },
   'fx4.outputGain': { rawMin: 0, rawMax: 150 },
+  'arp.swing': { rawMin: 0, rawMax: 25 },
+  'arp.octaves': { rawMin: 0, rawMax: 5 },
 };
 
 function offsetToNrpn(offset: number): { msb: number; lsb: number } {
@@ -34,10 +36,22 @@ function buildParamSpecs(): Record<string, DeepMindParamSpec> {
     if (field.kind.type !== 'u8') continue;
 
     const override = PARAM_OVERRIDES[field.name];
+
+    // Auto-derive rawMax from valueMap for enum params (e.g., arp.mode 0-10)
+    // so normalized 0..1 maps to the actual valid range, not 0..255.
+    let inferredMax: number | undefined;
+    if (!override?.rawMax && field.valueMap) {
+      const keys = Object.keys(field.valueMap).map(Number);
+      if (keys.length > 0) {
+        inferredMax = Math.max(...keys);
+      }
+    }
+
     specs[field.name] = {
       name: field.name,
       nrpn: offsetToNrpn(field.offset),
       kind: 'u8',
+      ...(inferredMax !== undefined ? { rawMax: inferredMax } : {}),
       ...override,
     };
   }
