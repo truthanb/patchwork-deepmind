@@ -58,6 +58,37 @@ cp -r $(npm explore patchwork-deepmind -- pwd)/skills/deepmind-parameter-guide .
 
 The skill is self-contained — no dependencies on this repo.
 
+## How it works
+
+The server runs as a stdio-based MCP process — no network involved. Your MCP client (Claude Desktop, VS Code, etc.) spawns it as a subprocess and communicates over stdin/stdout. The server auto-detects the DeepMind's USB-MIDI port on startup and performs a SysEx handshake to confirm the connection.
+
+## Example
+
+Once connected, you can talk to your agent naturally:
+
+> "Give me a warm pad with slow filter movement and a long reverb tail"
+
+> "Make the attack slower and add some chorus"
+
+> "Snapshot the current patch so I can see what all the values are"
+
+The agent uses the MCP tools to translate these into NRPN messages and SysEx commands in real time. You hear changes immediately on the synth.
+
+## Environment variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MIDI_IN` | auto-detect | MIDI input port index or exact name |
+| `MIDI_OUT` | auto-detect | MIDI output port index or exact name |
+| `MIDI_PORT` | — | Shared hint (partial name) used when `MIDI_IN`/`MIDI_OUT` are unset |
+| `MIDI_CH` | `0` | MIDI channel (0–15, where 0 = channel 1) |
+
+## Troubleshooting
+
+- **Server fails to find MIDI port** — Make sure the DeepMind is connected via USB and powered on *before* starting the server. Verify it appears in macOS Audio MIDI Setup.
+- **Parameters aren't changing on the synth** — Check that the DeepMind is set to receive on the correct MIDI channel (Global Settings → MIDI Channel). The default is channel 1.
+- **Multiple DeepMinds or other MIDI devices** — Use `MIDI_IN` / `MIDI_OUT` env vars to select the correct port by index or name.
+
 ## Development
 
 ```bash
@@ -65,3 +96,11 @@ npm install
 npm run build
 npm test
 ```
+
+## Contributing
+
+Issues and PRs welcome.
+
+## License
+
+MIT
