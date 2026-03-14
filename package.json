@@ -1,5 +1,5 @@
 {
-  "name": "mcp-deepmind12",
+  "name": "patchwork-deepmind",
   "version": "0.1.0",
   "description": "DeepMind 12 MCP server (DeepMind-first)",
   "main": "dist/mcp/server.js",
@@ -15,7 +15,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.2",
@@ -33,7 +33,7 @@
     "skills"
   ],
   "bin": {
-    "mcp-deepmind12": "dist/mcp/server.js"
+    "patchwork-deepmind": "dist/mcp/server.js"
   },
   "engines": {
     "node": ">=22.0.0"

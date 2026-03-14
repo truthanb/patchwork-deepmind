@@ -3,7 +3,7 @@ name: deepmind-mcp
 description: Build and modify the DeepMind 12 MCP server. Use for adding MCP tools (set_param, set_params, snapshot_state), implementing DeepMind MIDI protocols (NRPN, SysEx dumps, App Notify handshake), and maintaining deterministic parameter naming/alias ergonomics.
 compatibility: Node.js >=22, npm, macOS MIDI. Requires a connected DeepMind 12 (or fixtures) for full end-to-end validation.
 metadata:
-  repo: mcp-deepmind12
+  repo: patchwork-deepmind
   focus: deepmind12
 ---
 

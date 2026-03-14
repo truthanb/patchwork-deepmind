@@ -1,4 +1,4 @@
-# mcp-deepmind12
+# patchwork-deepmind
 
 MCP server for the Behringer DeepMind 12 synthesizer. Gives AI agents real-time control over synth parameters via MIDI NRPN, plus edit-buffer snapshots via SysEx.
 
@@ -11,7 +11,7 @@ MCP server for the Behringer DeepMind 12 synthesizer. Gives AI agents real-time 
 ## Install
 
 ```bash
-npm install mcp-deepmind12
+npm install patchwork-deepmind
 ```
 
 ## MCP client setup
@@ -23,7 +23,7 @@ Add to your MCP client config (Claude Desktop, VS Code, etc.):
   "mcpServers": {
     "deepmind12": {
       "command": "npx",
-      "args": ["mcp-deepmind12"]
+      "args": ["patchwork-deepmind"]
     }
   }
 }
@@ -53,7 +53,7 @@ The `skills/deepmind-parameter-guide/` folder is a portable agent skill that pro
 cp -r skills/deepmind-parameter-guide .claude/skills/
 
 # Or from the installed npm package:
-cp -r $(npm explore mcp-deepmind12 -- pwd)/skills/deepmind-parameter-guide .claude/skills/
+cp -r $(npm explore patchwork-deepmind -- pwd)/skills/deepmind-parameter-guide .claude/skills/
 ```
 
 The skill is self-contained — no dependencies on this repo.

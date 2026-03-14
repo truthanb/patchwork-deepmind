@@ -7,7 +7,7 @@ description: >
   parameters you should consider setting alongside it.
 compatibility: No runtime dependencies. Used as read-only context by agents.
 metadata:
-  repo: mcp-deepmind12
+  repo: patchwork-deepmind
   focus: parameter-knowledge
 ---
 
@@ -78,4 +78,4 @@ Key params:
 
 ## See also
 
-- Use with the `mcp-deepmind12` MCP server for full parameter control (`set_param`, `describe_param`, `snapshot_state`).
+- Use with the `patchwork-deepmind` MCP server for full parameter control (`set_param`, `describe_param`, `snapshot_state`).

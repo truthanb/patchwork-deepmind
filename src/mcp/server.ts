@@ -20,7 +20,7 @@ import {
 } from './handlers.js';
 import { listResources, readResource } from './resources.js';
 
-const SERVER_NAME = 'mcp-deepmind12';
+const SERVER_NAME = 'patchwork-deepmind';
 const SERVER_VERSION = '0.1.0';
 
 function createServer(): Server {
@@ -111,10 +111,10 @@ async function main(): Promise<void> {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   // Important: MCP servers should not write to stdout.
-  console.warn('[mcp-deepmind12] Server started');
+  console.warn('[patchwork-deepmind] Server started');
 }
 
 main().catch((error) => {
-  console.error('[mcp-deepmind12] Fatal error:', error);
+  console.error('[patchwork-deepmind] Fatal error:', error);
   process.exit(1);
 });

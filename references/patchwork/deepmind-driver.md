@@ -1,6 +1,6 @@
 # DeepMind Driver Implementation Plan
 
-## Status update: DeepMind MCP (mcp-deepmind12)
+## Status update: DeepMind MCP (patchwork-deepmind)
 
 As of 2026-01-10, a **DeepMind-first MCP server** exists in this workspace (separate from Patchwork’s multi-synth driver framework) and already hits the original “Phase 0 → Phase 1” goals:
 
