@@ -1,0 +1,102 @@
+export const toolDefinitions = [
+  {
+    name: 'describe_nrpn',
+    description:
+      'List known DeepMind 12 NRPN parameters with names, ranges, and notes (for LLM reasoning; use send_nrpn to set values). See resource deepmind12://references/deepmind_nrpn for the full table.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        query: {
+          type: 'string',
+          description: 'Optional substring filter over name/notes (case-insensitive).',
+        },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'describe_param',
+    description:
+      'Describe a DeepMind parameter by name: NRPN address (when known), raw/normalized ranges, and enum labels (when available). For FX params, see resource deepmind12://references/deepmind_fx.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        param: {
+          type: 'string',
+          description:
+            'Parameter name (accepts aliases). Examples: filter.cutoff, vcf.cutoff, modMatrix.1.source, fx.routing',
+        },
+      },
+      required: ['param'],
+    },
+  },
+  {
+    name: 'set_param',
+    description: 'Set a DeepMind parameter by structured name (NRPN-first).',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        synthId: { type: 'string', description: 'Optional synth instance ID (e.g., deepmind12-layer1)' },
+        param: { type: 'string', description: 'Parameter name (e.g., filter.cutoff, env.amp.attack, vcf.cutoff)' },
+        value: { type: 'number', minimum: 0, maximum: 1, description: 'Normalized 0..1' },
+      },
+      required: ['param', 'value'],
+    },
+  },
+  {
+    name: 'set_params',
+    description: 'Set multiple DeepMind parameters efficiently in one call (batched NRPN).',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        synthId: { type: 'string', description: 'Optional synth instance ID (e.g., deepmind12-layer1)' },
+        params: {
+          type: 'array' as const,
+          description: 'Array of parameter updates',
+          items: {
+            type: 'object' as const,
+            properties: {
+              param: { type: 'string' },
+              value: { type: 'number', minimum: 0, maximum: 1 },
+            },
+            required: ['param', 'value'],
+          },
+        },
+      },
+      required: ['params'],
+    },
+  },
+  {
+    name: 'snapshot_state',
+    description:
+      'Read current synth state via edit-buffer SysEx dump, returning a rich decoded parameter object (plus raw edit-buffer bytes). Use includeSysex=true only when you need the large base64 SysEx payload for debugging.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        synthId: { type: 'string', description: 'Optional synth instance ID (e.g., deepmind12-layer1)' },
+        includeSysex: {
+          type: 'boolean',
+          description: 'Include base64 SysEx/payload fields (large). Default: false.',
+        },
+        includeBytes: {
+          type: 'boolean',
+          description: 'Include raw edit-buffer bytes as an array of integers. Default: true.',
+        },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'send_nrpn',
+    description: 'Send raw NRPN message to DeepMind 12. Use this to programmatically change parameters by NRPN number during discovery.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        synthId: { type: 'string', description: 'Optional synth instance ID (e.g., deepmind12-layer1)' },
+        nrpn: { type: 'number', description: 'NRPN parameter number (0-240)', minimum: 0, maximum: 240 },
+        value: { type: 'number', description: 'Parameter value (typically 0-255)', minimum: 0, maximum: 255 },
+      },
+      required: ['nrpn', 'value'],
+    },
+  },
+];
