@@ -1,8 +1,9 @@
 # References
 
-This folder contains documentation and notes that inform implementation.
+This folder contains protocol and spec documentation that inform implementation.
 
-- `deepmind_nrpn.md`: cleaned NRPN/global parameter reference used to build the param spec.
-- `patchwork/`: historical planning docs from the Patchwork “museum” repo, kept for context and pitfalls.
+- `deepmind_nrpn.md`: NRPN parameter table (all 241 parameters with MSB/LSB/ranges).
+- `deepmind_sysex.md`: SysEx protocol spec (device inquiry, dump formats, packed-bit encoding).
+- `deepmind_fx.md`: FX type reference (type numbers, parameter orderings, UI labels).
 
 These files are inputs to implementation; they are not runtime dependencies.
