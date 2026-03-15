@@ -32,20 +32,27 @@ export const toolDefinitions = [
   },
   {
     name: 'set_param',
-    description: 'Set a DeepMind parameter by structured name (NRPN-first).',
+    description:
+      'Set a DeepMind parameter by structured name. Provide exactly one of: value (normalized 0..1), rawValue (raw integer), or label (enum string like "Loop").',
     inputSchema: {
       type: 'object' as const,
       properties: {
         synthId: { type: 'string', description: 'Optional synth instance ID (e.g., deepmind12-layer1)' },
         param: { type: 'string', description: 'Parameter name (e.g., filter.cutoff, env.amp.attack, vcf.cutoff)' },
         value: { type: 'number', minimum: 0, maximum: 1, description: 'Normalized 0..1' },
+        rawValue: { type: 'number', description: 'Raw integer value (e.g., 3). Sent directly as NRPN value.' },
+        label: {
+          type: 'string',
+          description: 'Enum label (e.g., "Loop", "LFO1"). Only for enum params. Case-insensitive.',
+        },
       },
-      required: ['param', 'value'],
+      required: ['param'],
     },
   },
   {
     name: 'set_params',
-    description: 'Set multiple DeepMind parameters efficiently in one call (batched NRPN).',
+    description:
+      'Set multiple DeepMind parameters efficiently in one call (batched NRPN). Each entry accepts value, rawValue, or label — same as set_param.',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -57,9 +64,11 @@ export const toolDefinitions = [
             type: 'object' as const,
             properties: {
               param: { type: 'string' },
-              value: { type: 'number', minimum: 0, maximum: 1 },
+              value: { type: 'number', minimum: 0, maximum: 1, description: 'Normalized 0..1' },
+              rawValue: { type: 'number', description: 'Raw integer value' },
+              label: { type: 'string', description: 'Enum label (case-insensitive)' },
             },
-            required: ['param', 'value'],
+            required: ['param'],
           },
         },
       },

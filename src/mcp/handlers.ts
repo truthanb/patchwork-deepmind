@@ -1,6 +1,6 @@
 import { resolveParamAlias } from '../deepmind/params/aliases.js';
 import { encodeNormalizedToNrpnValue } from '../deepmind/params/codec.js';
-import { getParamSpec, hasParamSpec } from '../deepmind/params/param-spec.js';
+import { getParamSpec, hasParamSpec, type DeepMindParamSpec } from '../deepmind/params/param-spec.js';
 import { NRPN_SPECS } from '../deepmind/nrpn-spec.js';
 import { getParamInfo } from '../deepmind/params/registry.js';
 import { snapshotEditBuffer } from '../deepmind/snapshot.js';
@@ -12,6 +12,51 @@ function resolveParamOrThrow(input: string): string {
   const alias = resolveParamAlias(input);
   if (alias && hasParamSpec(alias)) return alias;
   throw new Error(`Unsupported param: ${input}`);
+}
+
+export type ValueInput = { value?: number; rawValue?: number; label?: string };
+
+/**
+ * Resolve a value input (normalized, raw integer, or enum label) to the raw
+ * NRPN value to send and a human-readable display string.
+ * Exported for testing.
+ */
+export function resolveNrpnValue(
+  resolved: string,
+  spec: DeepMindParamSpec,
+  input: ValueInput,
+): { nrpnValue: number; displayValue: string } {
+  const provided = [input.value !== undefined, input.rawValue !== undefined, input.label !== undefined].filter(
+    Boolean,
+  ).length;
+  if (provided !== 1) {
+    throw new Error('Provide exactly one of: value (normalized 0..1), rawValue (raw integer), or label (enum string)');
+  }
+
+  if (input.label !== undefined) {
+    const info = getParamInfo(resolved);
+    if (!info?.enum) throw new Error(`Param ${resolved} is not an enum — cannot use label`);
+    const match = info.enum.values.find((v) => v.label.toLowerCase() === input.label!.toLowerCase());
+    if (!match) {
+      const valid = info.enum.values.map((v) => v.label).join(', ');
+      throw new Error(`Unknown label "${input.label}" for ${resolved}. Valid: ${valid}`);
+    }
+    return { nrpnValue: match.value, displayValue: `"${match.label}" (raw ${match.value})` };
+  }
+
+  if (input.rawValue !== undefined) {
+    const rawMin = spec.rawMin ?? 0;
+    const rawMax = spec.rawMax ?? 255;
+    const raw = Math.round(input.rawValue);
+    if (raw < rawMin || raw > rawMax) {
+      throw new Error(`rawValue ${raw} out of range ${rawMin}..${rawMax} for ${resolved}`);
+    }
+    return { nrpnValue: raw, displayValue: `raw ${raw}` };
+  }
+
+  // Normalized value (existing behavior)
+  const nrpnValue = encodeNormalizedToNrpnValue(spec, input.value!);
+  return { nrpnValue, displayValue: input.value!.toFixed(3) };
 }
 
 
@@ -122,12 +167,14 @@ export async function handleDescribeParam(params: { param: string }): Promise<{
 
 export async function handleSetParam(params: {
   param: string;
-  value: number;
+  value?: number;
+  rawValue?: number;
+  label?: string;
   synthId?: string;
 }): Promise<{ success: boolean; message: string; resolvedParam?: string }> {
   const resolved = resolveParamOrThrow(params.param);
   const spec = getParamSpec(resolved);
-  const nrpnValue = encodeNormalizedToNrpnValue(spec, params.value);
+  const { nrpnValue, displayValue } = resolveNrpnValue(resolved, spec, params);
 
   const transport = await getDeepMindTransport();
   transport.nrpn.send(spec.nrpn, nrpnValue, { enableAddressCaching: true });
@@ -135,12 +182,12 @@ export async function handleSetParam(params: {
   return {
     success: true,
     resolvedParam: resolved,
-    message: `Set ${resolved} to ${params.value.toFixed(3)} (NRPN ${spec.nrpn.msb}/${spec.nrpn.lsb} -> ${nrpnValue})`,
+    message: `Set ${resolved} to ${displayValue} (NRPN ${spec.nrpn.msb}/${spec.nrpn.lsb} -> ${nrpnValue})`,
   };
 }
 
 export async function handleSetParams(params: {
-  params: Array<{ param: string; value: number }>;
+  params: Array<{ param: string; value?: number; rawValue?: number; label?: string }>;
   synthId?: string;
 }): Promise<{ success: boolean; message: string; resolvedCount: number }> {
   const transport = await getDeepMindTransport();
@@ -148,8 +195,8 @@ export async function handleSetParams(params: {
   const resolved = params.params.map((p) => {
     const resolvedName = resolveParamOrThrow(p.param);
     const spec = getParamSpec(resolvedName);
-    const nrpnValue = encodeNormalizedToNrpnValue(spec, p.value);
-    return { spec, nrpnValue, param: resolvedName, value: p.value };
+    const { nrpnValue } = resolveNrpnValue(resolvedName, spec, p);
+    return { spec, nrpnValue, param: resolvedName };
   });
 
   // Sort by NRPN address to maximize the benefit of address caching.

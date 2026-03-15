@@ -19,8 +19,10 @@ When you need to set one or more DeepMind 12 parameters:
    envelopes, etc.) from the table below.
 2. Read that section file for parameter details, value guidance, and
    interactions.
-3. Set the parameter(s) with `set_param` or `set_params` using the
-   `paramKey` from the section's Parameters table.
+3. Set the parameter(s) with `set_param` or `set_params`:
+   - **Enum params**: use `label` (e.g., `{ param: "env.amp.triggerMode", label: "Loop" }`) — case-insensitive.
+   - **Continuous params**: use `value` (normalized 0..1) or `rawValue` (integer).
+   - Run `describe_param` to see valid labels for any enum param.
 
 If you're designing a specific type of sound, check the "Sound recipes"
 section at the bottom for which sections to read together.
