@@ -434,15 +434,15 @@ export const DECODED_EDIT_BUFFER_MAP: readonly DecodedFieldSpec[] = [
     offset: 22,
     kind: { type: 'u8' },
     valueMap: {
-      0: 'LFO 2',
-      1: 'LFO 1',
+      0: 'LFO 1',
+      1: 'LFO 2',
       2: 'VCA Env',
       3: 'VCF Env',
       4: 'Mod Env',
       5: 'Unipolar (LFO 1)',
       6: 'Unipolar (LFO 2)',
     },
-    notes: 'Discovered by NRPN 22 test; decoded edit-buffer payload byte[22] (0-based). Note: NRPN values 0 and 1 map to buffer values 1 and 0 (swapped).',
+    notes: 'Discovered by NRPN 22 test; decoded edit-buffer payload byte[22] (0-based). Confirmed: 0=LFO 1, 1=LFO 2 (matches manual and osc2.pitchModSelect).',
   },
   {
     name: 'osc1.aftertouch.pitchMod',

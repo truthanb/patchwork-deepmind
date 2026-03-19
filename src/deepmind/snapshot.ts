@@ -1,6 +1,12 @@
 import { HardwareMidiPort } from '../midi/hardware-port.js';
 import { decodeDerivedFieldsFromEditBuffer, type DerivedValue } from './decoded-patch-map.js';
-import { decodeDeepMindDumpResponse, makeDeepMindDumpRequest, toBase64, trimTrailingZeros } from './sysex.js';
+import {
+  decodeDeepMindDumpResponse,
+  makeDeepMindDumpRequest,
+  makeEditBufferDump,
+  toBase64,
+  trimTrailingZeros,
+} from './sysex.js';
 
 export type DeepMindSnapshot = {
   rawSysexBase64: string;
@@ -51,4 +57,49 @@ export async function snapshotEditBuffer(opts: {
       trimmedCount: trimmed.trimmedCount,
     },
   };
+}
+
+/**
+ * Read the current edit buffer, apply byte-level modifications, and write
+ * the entire buffer back via sysex. This bypasses NRPN and is useful when
+ * certain NRPN addresses don't respond to writes.
+ */
+export async function patchEditBuffer(opts: {
+  port: HardwareMidiPort;
+  deviceId: number;
+  timeoutMs: number;
+  /** Map of decoded-byte offset → new value to apply before writing back. */
+  patches: Map<number, number>;
+}): Promise<{ modifiedCount: number; decodedLength: number }> {
+  // 1. Read current edit buffer
+  const request = makeDeepMindDumpRequest({ type: 'edit', deviceId: opts.deviceId });
+  const response = await opts.port.requestSysEx(request, opts.timeoutMs, (msg) => {
+    if (msg.length < 10) return false;
+    if (msg[1] !== 0x00 || msg[2] !== 0x20 || msg[3] !== 0x32 || msg[4] !== 0x20) return false;
+    if ((msg[5] & 0x0f) !== (opts.deviceId & 0x0f)) return false;
+    return msg[6] === 0x04;
+  });
+  const { meta, decodedPayload } = decodeDeepMindDumpResponse(response);
+  if (meta.kind !== 'edit') throw new Error(`Expected edit buffer, got ${meta.kind}`);
+
+  // 2. Apply patches to the decoded bytes
+  const patched = new Uint8Array(decodedPayload);
+  let modifiedCount = 0;
+  for (const [offset, value] of opts.patches) {
+    if (offset < 0 || offset >= patched.length) {
+      throw new Error(`Offset ${offset} out of range (0..${patched.length - 1})`);
+    }
+    patched[offset] = value & 0xff;
+    modifiedCount++;
+  }
+
+  // 3. Write back via sysex
+  const dump = makeEditBufferDump({
+    deviceId: opts.deviceId,
+    protocol: meta.protocol ?? 7,
+    decodedPayload: patched,
+  });
+  opts.port.sendBytes(dump);
+
+  return { modifiedCount, decodedLength: patched.length };
 }

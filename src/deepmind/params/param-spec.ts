@@ -22,6 +22,8 @@ const PARAM_OVERRIDES: Record<string, Pick<DeepMindParamSpec, 'rawMin' | 'rawMax
   'fx4.outputGain': { rawMin: 0, rawMax: 150 },
   'arp.swing': { rawMin: 0, rawMax: 25 },
   'arp.octaves': { rawMin: 0, rawMax: 5 },
+  'pitchBend.upDepth': { rawMin: 0, rawMax: 24 },
+  'pitchBend.downDepth': { rawMin: 0, rawMax: 24 },
 };
 
 function offsetToNrpn(offset: number): { msb: number; lsb: number } {

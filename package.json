@@ -1,6 +1,6 @@
 {
   "name": "patchwork-deepmind",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "DeepMind 12 MCP server (DeepMind-first)",
   "main": "dist/mcp/server.js",
   "scripts": {

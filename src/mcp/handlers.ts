@@ -3,7 +3,7 @@ import { encodeNormalizedToNrpnValue } from '../deepmind/params/codec.js';
 import { getParamSpec, hasParamSpec, type DeepMindParamSpec } from '../deepmind/params/param-spec.js';
 import { NRPN_SPECS } from '../deepmind/nrpn-spec.js';
 import { getParamInfo } from '../deepmind/params/registry.js';
-import { snapshotEditBuffer } from '../deepmind/snapshot.js';
+import { patchEditBuffer, snapshotEditBuffer } from '../deepmind/snapshot.js';
 import { getDeepMindTransport } from '../deepmind/transport.js';
 
 function resolveParamOrThrow(input: string): string {
@@ -274,6 +274,37 @@ export async function handleSendNrpn(params: {
   return {
     success: true,
     message: `Sent NRPN ${params.nrpn} (MSB ${msb}, LSB ${lsb}) with value ${params.value}`,
+  };
+}
+
+export async function handlePatchEditBuffer(params: {
+  patches: Array<{ offset: number; value: number }>;
+  synthId?: string;
+}): Promise<{ success: boolean; message: string; modifiedCount: number }> {
+  const transport = await getDeepMindTransport();
+
+  const timeoutMsRaw = process.env.SNAPSHOT_TIMEOUT_MS;
+  const timeoutMs = timeoutMsRaw ? Number(timeoutMsRaw) : 15000;
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) {
+    throw new Error(`Invalid SNAPSHOT_TIMEOUT_MS: ${timeoutMsRaw}`);
+  }
+
+  const patchMap = new Map<number, number>();
+  for (const p of params.patches) {
+    patchMap.set(p.offset, p.value);
+  }
+
+  const result = await patchEditBuffer({
+    port: transport.port,
+    deviceId: transport.deviceId,
+    timeoutMs,
+    patches: patchMap,
+  });
+
+  return {
+    success: true,
+    modifiedCount: result.modifiedCount,
+    message: `Patched ${result.modifiedCount} byte(s) in edit buffer (${result.decodedLength} bytes total) via sysex`,
   };
 }
 

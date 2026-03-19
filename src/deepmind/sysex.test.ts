@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { decodeDeepMindDumpResponse, trimTrailingZeros } from './sysex.js';
+import { decodeDeepMindDumpResponse, packMsb, trimTrailingZeros, unpackPackedMsb } from './sysex.js';
 
 type FixtureGroup = {
   syx: string;
@@ -77,4 +77,30 @@ describe('deepmind sysex dump decoding (fixtures)', () => {
       expect(meta.packedBytes).toBeGreaterThan(0);
     });
   }
+});
+
+describe('packMsb / unpackPackedMsb round-trip', () => {
+  it('round-trips 242-byte edit buffer payload', () => {
+    // Use a real decoded fixture as test input
+    const pairs = findFixturePairs();
+    expect(pairs.length).toBeGreaterThan(0);
+
+    const raw = readBytes(pairs[0].syx);
+    const { decodedPayload } = decodeDeepMindDumpResponse(raw);
+    const trimmed = trimTrailingZeros(decodedPayload, 3).trimmed;
+
+    // Pack then unpack should recover the original (padded to multiple of 7)
+    const packed = packMsb(trimmed);
+    const recovered = unpackPackedMsb(packed);
+
+    // recovered may have trailing zeros due to 7-byte alignment padding
+    expect(recovered.slice(0, trimmed.length)).toEqual(trimmed);
+  });
+
+  it('round-trips arbitrary data with high bits', () => {
+    const data = Uint8Array.from([0, 127, 128, 200, 255, 1, 42]);
+    const packed = packMsb(data);
+    const recovered = unpackPackedMsb(packed);
+    expect(recovered.slice(0, data.length)).toEqual(data);
+  });
 });

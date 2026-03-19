@@ -108,4 +108,28 @@ export const toolDefinitions = [
       required: ['nrpn', 'value'],
     },
   },
+  {
+    name: 'patch_edit_buffer',
+    description:
+      'Read the current edit buffer via sysex, apply one or more byte-level patches, and write the full buffer back. Bypasses NRPN — use this when set_param fails for certain parameters (e.g., FX params). Each patch is an offset + raw value (0–255).',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        synthId: { type: 'string', description: 'Optional synth instance ID' },
+        patches: {
+          type: 'array' as const,
+          description: 'Array of byte patches to apply',
+          items: {
+            type: 'object' as const,
+            properties: {
+              offset: { type: 'number', description: 'Decoded edit-buffer byte offset (0–241)' },
+              value: { type: 'number', description: 'Raw byte value (0–255)', minimum: 0, maximum: 255 },
+            },
+            required: ['offset', 'value'],
+          },
+        },
+      },
+      required: ['patches'],
+    },
+  },
 ];

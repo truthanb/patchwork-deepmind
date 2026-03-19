@@ -131,6 +131,42 @@ export function decodeDeepMindDumpResponse(rawSysex: Uint8Array): {
   };
 }
 
+/**
+ * Inverse of unpackPackedMsb: encode 8-bit bytes into the DeepMind
+ * "Packed MS bit" format (7 data bytes → 8 MIDI bytes per group).
+ */
+export function packMsb(decoded: Uint8Array): Uint8Array {
+  const out: number[] = [];
+  for (let i = 0; i < decoded.length; i += 7) {
+    let msbByte = 0;
+    const chunk: number[] = [];
+    for (let j = 0; j < 7; j++) {
+      const val = i + j < decoded.length ? decoded[i + j] : 0;
+      if (val & 0x80) msbByte |= 1 << j;
+      chunk.push(val & 0x7f);
+    }
+    out.push(msbByte & 0x7f);
+    out.push(...chunk);
+  }
+  return Uint8Array.from(out);
+}
+
+/**
+ * Build a SysEx message that writes the full edit buffer to the synth.
+ * The synth treats an incoming "Edit Buffer Dump Response" (cmd 0x04)
+ * as a "load this into the edit buffer" command.
+ */
+export function makeEditBufferDump(opts: {
+  deviceId: number;
+  protocol: number;
+  decodedPayload: Uint8Array;
+}): Uint8Array {
+  const packed = packMsb(opts.decodedPayload);
+  // Frame: F0 00 20 32 20 <dev> 04 <proto> <packed...> F7
+  const header = [0xf0, 0x00, 0x20, 0x32, 0x20, opts.deviceId & 0x0f, 0x04, opts.protocol & 0x7f];
+  return Uint8Array.from([...header, ...packed, 0xf7]);
+}
+
 export function toBase64(bytes: Uint8Array): string {
   return Buffer.from(bytes).toString('base64');
 }

@@ -17,6 +17,7 @@ import {
   handleSetParams,
   handleSnapshotState,
   handleSendNrpn,
+  handlePatchEditBuffer,
 } from './handlers.js';
 import { listResources, readResource } from './resources.js';
 
@@ -83,6 +84,11 @@ function createServer(): Server {
           break;
         case 'send_nrpn':
           result = await handleSendNrpn(args as { nrpn: number; value: number; synthId?: string });
+          break;
+        case 'patch_edit_buffer':
+          result = await handlePatchEditBuffer(
+            args as { patches: Array<{ offset: number; value: number }>; synthId?: string }
+          );
           break;
         default:
           return {
