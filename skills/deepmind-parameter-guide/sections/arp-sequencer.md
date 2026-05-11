@@ -78,15 +78,7 @@ The control sequencer is a **modulation source** (not a note sequencer).
 Route it to any destination via the mod matrix using source "Ctrl Seq".
 Each step value is bipolar.
 
-| Parameter (manual name)       | paramKey                     | NRPN    | Range  | What it does                                         |
-|-------------------------------|------------------------------|---------|--------|------------------------------------------------------|
-| Ctrl Seq Enable               | `controlSeq.enabled`         | 117     | 0–1    | Off (0) / On (1)                                     |
-| Ctrl Seq Clock Divider        | `controlSeq.clockDivider`    | 118     | 0–15   | Divides master BPM (see Ctrl Seq Clock table below)  |
-| Ctrl Seq Length                | `controlSeq.length`          | 119     | 0–31   | 1 step (0) → 32 steps (31). Default: 5 (= 6 steps)  |
-| Ctrl Seq Swing                | `controlSeq.swing`           | 120     | 0–25   | 50% (0) → 75% (25). Default: 0 (50%)                |
-| Ctrl Seq Key/Loop             | `controlSeq.keySyncLoop`     | 121     | 0–2    | Loop On (0), Key Sync On (1), Loop & Key Sync On (2) |
-| Ctrl Seq Slew Rate            | `controlSeq.slewRate`        | 122     | 0–255  | Transition smoothing: 0 = instant, 255 = full glide  |
-| Ctrl Seq Step 1–32 Value      | `controlSeq.step.N.value`    | 123–154 | 0–255  | 0 = skip; 1–255 → bipolar −127…+127 (value − 128)   |
+**Params — Control Sequencer**: `controlSeq.enabled`, `controlSeq.clockDivider`, `controlSeq.length` (0–31 → 1–32 steps), `controlSeq.swing`, `controlSeq.keySyncLoop`, `controlSeq.slewRate`, `controlSeq.step.N.value` (N=1–32; 0=skip, 1–255 → bipolar −127…+127 via value−128). Run `describe_param` for ranges.
 
 ### Ctrl Seq Clock Divider values
 
@@ -138,20 +130,7 @@ arpeggiator (16 options vs 13):
 
 ## ARP Settings (global clock / sync)
 
-These are accessed via the third page of the ARP/SEQ EDIT menu
-(§8.1.9). They affect the **master BPM clock** shared by arp, control
-sequencer, LFO sync, envelope sync, and time-based FX.
-
-| Parameter (manual name) | paramKey | NRPN | Range | What it does |
-|-------------------------|----------|------|-------|--------------|
-| Clock Source            | ??       | —    | 0–2   | Internal (0), MIDI Auto (1), USB Auto (2). Auto modes fall back to internal if no external clock present. Default: MIDI Auto. |
-| Transmit Clock          | ??       | —    | 0–1   | Sends MIDI clock out when clock source is Internal. |
-| ARP-to-MIDI             | ??       | —    | 0–1   | Sends arp note output to MIDI out for recording. Default: Off. |
-| ARP-Params              | ??       | —    | 0–1   | Program (0): arp settings stored per-program. Global (1): arp settings persist across program changes. |
-
-> Note: These are global / menu settings. Their paramKeys and NRPNs
-> are not yet mapped — they may be menu-only items without edit-buffer
-> equivalents.
+Menu-only global settings (no NRPNs): Clock Source (Internal/MIDI Auto/USB Auto), Transmit Clock, ARP-to-MIDI, ARP-Params (Program vs Global storage). Auto clock falls back to internal if no external clock present.
 
 ## Value guidance
 

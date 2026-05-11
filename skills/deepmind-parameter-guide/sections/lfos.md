@@ -6,33 +6,7 @@
 
 The DeepMind 12 has two identical Low Frequency Oscillators (**LFO 1** and **LFO 2**) that generate sub-audio control signals used to modulate other parameters — pitch (vibrato), amplitude (tremolo), filter (wah), or any of 130 Mod Matrix destinations. LFOs offer seven waveform shapes including sample & hold and sample & glide. They can free-run or synchronize to key presses (Key Sync) or to the Master BPM clock (Arp Sync). The LFO rate can reach into audio frequencies (up to 65.4 Hz free-running, 1280 Hz via Mod Matrix), enabling cross-modulation and FM-like effects.
 
-## Parameters
-
-### LFO 1
-
-| Parameter (manual name)         | paramKey              | NRPN | Range | What it does                                                                 |
-|---------------------------------|-----------------------|------|-------|------------------------------------------------------------------------------|
-| LFO 1 Rate                     | `lfo1.rate`           | 0    | 0–255 | Speed of the LFO. 0 = 0.041 Hz (24.1 s), 255 = 65.4 Hz (15.3 ms).          |
-| LFO 1 Clock Divide             | `lfo1.clockDivide`    | 0    | 0–255 | When Arp Sync On, replaces Rate — selects a time division of Master BPM.     |
-| LFO 1 Delay / Fade Time        | `lfo1.delayTime`      | 1    | 0–255 | Delay before LFO starts. 0 = immediate, 255 = 6.59 s. 40% delay + 60% fade.|
-| LFO 1 Shape                    | `lfo1.shape`          | 2    | 0–6   | Waveform shape (see Shape enum below).                                       |
-| LFO 1 Key Sync                 | `lfo1.keySync`        | 3    | 0–1   | Off (0) = free-running; On (1) = LFO resets on each key press.              |
-| LFO 1 Arp Sync                 | `lfo1.arpSeq.sync`    | 4    | 0–1   | Off (0) = free rate; On (1) = syncs to Master BPM via clock division.       |
-| LFO 1 Phase / Mono Mode        | `lfo1.phase`          | 5    | 0–255 | 0 = Poly (independent per voice), 1 = Mono (shared), 2–255 = Spread-1 to Spread-254. |
-| LFO 1 Slew Rate                | `lfo1.slewRate`       | 6    | 0–255 | Smooths LFO output transitions. 0 = sharp/immediate, higher = smoother.     |
-
-### LFO 2
-
-| Parameter (manual name)         | paramKey              | NRPN | Range | What it does                                                                 |
-|---------------------------------|-----------------------|------|-------|------------------------------------------------------------------------------|
-| LFO 2 Rate                     | `lfo2.rate`           | 7    | 0–255 | Speed of the LFO. 0 = 0.054 Hz, 255 = 65.4 Hz.                             |
-| LFO 2 Clock Divide             | `lfo2.clockDivide`    | 7    | 0–255 | When Arp Sync On, replaces Rate — selects a time division of Master BPM.     |
-| LFO 2 Delay / Fade Time        | `lfo2.delayTime`      | 8    | 0–255 | Delay before LFO starts. 0 = immediate, 255 = 6.59 s.                       |
-| LFO 2 Shape                    | `lfo2.shape`          | 9    | 0–6   | Waveform shape (see Shape enum below).                                       |
-| LFO 2 Key Sync                 | `lfo2.keySync`        | 10   | 0–1   | Off (0) = free-running; On (1) = LFO resets on each key press.              |
-| LFO 2 Arp Sync                 | `lfo2.arpSeq.sync`    | 11   | 0–1   | Off (0) = free rate; On (1) = syncs to Master BPM via clock division.       |
-| LFO 2 Phase / Mono Mode        | `lfo2.phase`          | 12   | 0–255 | 0 = Poly, 1 = Mono, 2–255 = Spread-1 to Spread-254.                        |
-| LFO 2 Slew Rate                | `lfo2.slewRate`       | 13   | 0–255 | Smooths LFO output transitions. 0 = sharp/immediate, higher = smoother.     |
+**Params**: `lfo1.rate`, `lfo1.clockDivide`, `lfo1.delayTime`, `lfo1.shape`, `lfo1.keySync`, `lfo1.arpSeq.sync`, `lfo1.phase`, `lfo1.slewRate` — and identical pattern for `lfo2.*`. When `arpSeq.sync` is On, `rate` is reinterpreted as `clockDivide` (see Clock Divide table below). Run `describe_param` on any for ranges.
 
 ### Shape enum (NRPN 2, 9)
 

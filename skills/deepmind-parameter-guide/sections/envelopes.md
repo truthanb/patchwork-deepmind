@@ -6,49 +6,7 @@
 
 The DeepMind 12 has three independent ADSR envelope generators: **VCA Envelope** (controls amplitude over time), **VCF Envelope** (controls filter cutoff over time), and **MOD Envelope** (a free-routable envelope available as a Mod Matrix source). Each envelope has four stages — Attack (time), Decay (time), Sustain (level), and Release (time) — plus per-stage curve shaping and a selectable trigger mode. Envelopes are normally triggered by key press, but can also be triggered by an LFO, looped continuously, or stepped from the Control Sequencer.
 
-## Parameters
-
-### VCA Envelope (Env 1)
-
-| Parameter (manual name)         | paramKey                  | NRPN | Range | What it does                                                                 |
-|---------------------------------|---------------------------|------|-------|------------------------------------------------------------------------------|
-| VCA Envelope Attack Time        | `env.amp.attack`          | 53   | 0–255 | Time from zero to maximum level. Higher = slower attack.                     |
-| VCA Envelope Decay Time         | `env.amp.decay`           | 54   | 0–255 | Time from maximum level to sustain level. Higher = longer decay.             |
-| VCA Envelope Sustain Level      | `env.amp.sustain`         | 55   | 0–255 | Level held while key is pressed. 0 = silent, 255 = full level.              |
-| VCA Envelope Release Time       | `env.amp.release`         | 56   | 0–255 | Time from sustain level to zero after key release. Higher = longer tail.     |
-| VCA Envelope Trigger Mode       | `env.amp.triggerMode`     | 57   | 0–4   | 0 = Key, 1 = LFO 1, 2 = LFO 2, 3 = Loop, 4 = Control Sequencer Step       |
-| VCA Envelope Attack Curve       | `env.amp.attackCurve`     | 58   | 0–255 | Shape of the attack stage curve.                                             |
-| VCA Envelope Decay Curve        | `env.amp.decayCurve`      | 59   | 0–255 | Shape of the decay stage curve.                                              |
-| VCA Envelope Sustain Curve      | `env.amp.sustainCurve`    | 60   | 0–255 | Slope during the sustain stage (sustain is not flat by default only at 128). |
-| VCA Envelope Release Curve      | `env.amp.releaseCurve`    | 61   | 0–255 | Shape of the release stage curve.                                            |
-
-### VCF Envelope (Env 2)
-
-| Parameter (manual name)         | paramKey                  | NRPN | Range | What it does                                                                 |
-|---------------------------------|---------------------------|------|-------|------------------------------------------------------------------------------|
-| VCF Envelope Attack Time        | `env.filter.attack`       | 62   | 0–255 | Time for filter to open from cutoff fader position to VCF ENV depth.         |
-| VCF Envelope Decay Time         | `env.filter.decay`        | 63   | 0–255 | Time from peak cutoff to sustain frequency.                                  |
-| VCF Envelope Sustain Level      | `env.filter.sustain`      | 64   | 0–255 | Filter cutoff level held while key is pressed.                               |
-| VCF Envelope Release Time       | `env.filter.release`      | 65   | 0–255 | Time for filter to close after key release.                                  |
-| VCF Envelope Trigger Mode       | `env.filter.triggerMode`  | 66   | 0–4   | 0 = Key, 1 = LFO 1, 2 = LFO 2, 3 = Loop, 4 = Control Sequencer Step       |
-| VCF Envelope Attack Curve       | `env.filter.attackCurve`  | 67   | 0–255 | Shape of the attack stage curve.                                             |
-| VCF Envelope Decay Curve        | `env.filter.decayCurve`   | 68   | 0–255 | Shape of the decay stage curve.                                              |
-| VCF Envelope Sustain Curve      | `env.filter.sustainCurve` | 69   | 0–255 | Slope during the sustain stage.                                              |
-| VCF Envelope Release Curve      | `env.filter.releaseCurve` | 70   | 0–255 | Shape of the release stage curve.                                            |
-
-### MOD Envelope (Env 3)
-
-| Parameter (manual name)         | paramKey                  | NRPN | Range | What it does                                                                 |
-|---------------------------------|---------------------------|------|-------|------------------------------------------------------------------------------|
-| MOD Envelope Attack Time        | `env.mod.attack`          | 71   | 0–255 | Time to reach peak value. Higher = slower.                                   |
-| MOD Envelope Decay Time         | `env.mod.decay`           | 72   | 0–255 | Time from peak to sustain level.                                             |
-| MOD Envelope Sustain Level      | `env.mod.sustain`         | 73   | 0–255 | Value held while key is pressed.                                             |
-| MOD Envelope Release Time       | `env.mod.release`         | 74   | 0–255 | Time from sustain to zero after key release.                                 |
-| MOD Envelope Trigger Mode       | `env.mod.triggerMode`     | 75   | 0–4   | 0 = Key, 1 = LFO 1, 2 = LFO 2, 3 = Loop, 4 = Control Sequencer Step       |
-| MOD Envelope Attack Curve       | `env.mod.attackCurve`     | 76   | 0–255 | Shape of the attack stage curve.                                             |
-| MOD Envelope Decay Curve        | `env.mod.decayCurve`      | 77   | 0–255 | Shape of the decay stage curve.                                              |
-| MOD Envelope Sustain Curve      | `env.mod.sustainCurve`    | 78   | 0–255 | Slope during the sustain stage.                                              |
-| MOD Envelope Release Curve      | `env.mod.releaseCurve`    | 79   | 0–255 | Shape of the release stage curve.                                            |
+**Params**: Three independent envelopes — VCA (`env.amp.*`), VCF (`env.filter.*`), MOD (`env.mod.*`). Each has `.attack`, `.decay`, `.sustain`, `.release`, `.triggerMode`, `.attackCurve`, `.decayCurve`, `.sustainCurve`, `.releaseCurve`. Run `describe_param` on any for NRPNs and ranges.
 
 ## Value guidance
 

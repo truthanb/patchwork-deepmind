@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "generate:fx-reference": "npm run build && node dist/scripts/generate-fx-reference.js",
     "start": "node dist/mcp/server.js",
     "smoke:handshake": "npm run build && node dist/scripts/smoke-handshake.js",
     "smoke:nrpn": "npm run build && node dist/scripts/smoke-nrpn.js",
@@ -43,6 +44,7 @@
   },
   "files": [
     "dist",
+    "references",
     "skills"
   ],
   "bin": {

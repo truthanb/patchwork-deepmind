@@ -77,11 +77,14 @@ function decodedInfo(spec: DecodedFieldSpec): ParamDecodedInfo {
     }
   }
 
+  // Prefer the explicit usable rawMax from value metadata over the bit-width default.
+  const effectiveRawMax = spec.value?.rawMax ?? rawMax;
+
   return {
     offset: spec.offset,
     kind: spec.kind.type,
     rawMin: 0,
-    rawMax,
+    rawMax: effectiveRawMax,
     normalizedMin: 0,
     normalizedMax: 1,
     ui: spec.ui,

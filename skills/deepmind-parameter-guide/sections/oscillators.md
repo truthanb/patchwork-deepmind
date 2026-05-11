@@ -6,32 +6,7 @@
 
 The oscillator section generates the raw audio material for the synth. OSC 1 is a dual-waveform oscillator (sawtooth + square, independently switchable). OSC 2 is a single square-wave oscillator with pitch offset and tone modulation. A pink noise generator is also mixed in here. All oscillator pitch control is digital (stable tuning); the audio signal path is fully analog.
 
-## Parameters
-
-| Parameter (manual name)         | paramKey                    | NRPN | Range   | What it does                                         |
-|---------------------------------|-----------------------------|------|---------|------------------------------------------------------|
-| OSC 1 Range                     | `osc1.range`                | 14   | 0–2     | Octave: 16' (0), 8' (1), 4' (2)                     |
-| OSC 1 Saw Enable                | `osc1.sawtooth`             | 19   | 0–1     | Off (0), On (1). Default: On                         |
-| OSC 1 Pulse Enable              | `osc1.square`               | 18   | 0–1     | Off (0), On (1). Default: On                         |
-| OSC 1 Pitch Mod Depth           | `osc1.pitchMod`             | 21   | 0–255   | Pitch mod amount (non-linear fader: 0–36 semitones)  |
-| OSC 1 Pitch Mod Select          | `osc1.pitchModSelect`       | 22   | 0–6     | Mod source (see enum below)                          |
-| OSC 1 Aftertouch > Pitch Mod    | `osc1.aftertouch.pitchMod`  | 23   | 0–255   | Aftertouch scales pitch mod depth. Default: 0        |
-| OSC 1 Mod Wheel > Pitch Mod     | `osc1.modWheel.pitchMod`    | 24   | 0–255   | Mod wheel scales pitch mod depth. Default: 0         |
-| OSC 1 PWM Depth                 | `osc1.pwm`                  | 25   | 0–255   | Pulse width (manual) or PWM depth (mod source)       |
-| OSC 1 PWM Source                | `osc1.pwmSource`            | 16   | 0–5     | PWM mod source (see enum below)                      |
-| OSC 1 Pitch Mod Mode            | `osc1.pitchModMode`         | 38   | 0–1     | 0 = OSC1+2 (both), 1 = OSC 1 Only                   |
-| OSC Key Down Reset              | `osc.keyDownReset`          | 92   | 0–1     | Off (0), On (1). Resets osc phase on key-down        |
-| OSC Sync Enable                 | `osc2.sync`                 | 20   | 0–1     | Off (0), On (1). Hard-syncs OSC 2 to OSC 1           |
-| OSC 2 Range                     | `osc2.range`                | 15   | 0–2     | Octave: 16' (0), 8' (1), 4' (2)                     |
-| OSC 2 Pitch                     | `osc2.pitch`                | 27   | 0–255   | Pitch offset: -12.0 to +12.0 semitones               |
-| OSC 2 Level                     | `osc2.level`                | 26   | 0–255   | Off / -48.0 dB to 0.0 dB. Default: Off              |
-| OSC 2 Pitch Mod Depth           | `osc2.pitchMod`             | 29   | 0–255   | Pitch mod amount (non-linear: 0–36 semitones)        |
-| OSC 2 Pitch Mod Select          | `osc2.pitchModSelect`       | 32   | 0–6     | Mod source (see enum below)                          |
-| OSC 2 Aftertouch > Pitch Mod    | `osc2.aftertouch.pitchMod`  | 30   | 0–255   | Aftertouch scales OSC 2 pitch mod. Default: 0        |
-| OSC 2 Mod Wheel > Pitch Mod     | `osc2.modWheel.pitchMod`    | 31   | 0–255   | Mod wheel scales OSC 2 pitch mod. Default: 0         |
-| OSC 2 Tone Mod Depth            | `osc2.toneMod`              | 28   | 0–255   | Tone mod depth: 50%–100%. Default: 50%               |
-| OSC 2 Tone Mod Source           | `osc2.toneModSource`        | 17   | 0–5     | Tone mod source (see enum below)                     |
-| Noise Level                     | `noise.level`               | 33   | 0–255   | Off / -48.1 dB to 0.0 dB. Default: Off              |
+**Params**: `osc1.range`, `osc1.sawtooth`, `osc1.square`, `osc1.pitchMod`, `osc1.pitchModSelect`, `osc1.aftertouch.pitchMod`, `osc1.modWheel.pitchMod`, `osc1.pwm`, `osc1.pwmSource`, `osc1.pitchModMode`, `osc.keyDownReset`, `osc2.sync`, `osc2.range`, `osc2.pitch`, `osc2.level`, `osc2.pitchMod`, `osc2.pitchModSelect`, `osc2.aftertouch.pitchMod`, `osc2.modWheel.pitchMod`, `osc2.toneMod`, `osc2.toneModSource`, `noise.level` — run `describe_param` on any for range and labels.
 
 ### Pitch Mod Source enum (NRPN 22, 32)
 

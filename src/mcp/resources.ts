@@ -35,6 +35,14 @@ const RESOURCES: FileBackedResource[] = [
     mimeType: 'text/markdown',
     fileRelativePath: 'references/deepmind_sysex.md',
   },
+  {
+    uri: 'deepmind12://references/deepmind_fx',
+    name: 'deepmind_fx',
+    title: 'DeepMind 12 FX Reference',
+    description: 'DeepMind 12 FX type, parameter, and typed-prefix reference (markdown).',
+    mimeType: 'text/markdown',
+    fileRelativePath: 'references/deepmind_fx.md',
+  },
 ];
 
 export function listResources(): McpResource[] {

@@ -6,30 +6,7 @@
 
 The Modulation Matrix routes any of 24 **sources** (LFOs, envelopes, controllers, etc.) to any of 132 **destinations** (oscillator pitch, filter cutoff, envelope times, FX parameters, etc.) with a bipolar depth. The DeepMind 12 provides **8 independent busses** — each bus is one source → destination → depth triple. Multiple busses can share the same source or destination, and mod busses can target other busses' depths for meta-modulation.
 
-## Parameters
-
-Each of the 8 slots (1–8) has three parameters. Slot *N* uses NRPNs `93 + (N-1)×3` through `95 + (N-1)×3`.
-
-| Parameter (manual name)      | paramKey                    | NRPN       | Range   | What it does                                                 |
-|------------------------------|-----------------------------|------------|---------|--------------------------------------------------------------|
-| Mod *N* Source               | `modMatrix.N.source`        | 93 + (N-1)×3 | 0–24  | Which signal drives the modulation (see Sources table below) |
-| Mod *N* Destination          | `modMatrix.N.destination`   | 94 + (N-1)×3 | 0–132 | Which parameter is modulated (see Destinations table below)  |
-| Mod *N* Depth                | `modMatrix.N.depth`         | 95 + (N-1)×3 | 0–255 | Bipolar depth: display -128 (raw 0) to +127 (raw 255). Raw 128 = 0 (no modulation). |
-
-**Concrete NRPNs:**
-
-| Slot | Source NRPN | Destination NRPN | Depth NRPN |
-|------|-------------|-------------------|------------|
-| 1    | 93          | 94                | 95         |
-| 2    | 96          | 97                | 98         |
-| 3    | 99          | 100               | 101        |
-| 4    | 102         | 103               | 104        |
-| 5    | 105         | 106               | 107        |
-| 6    | 108         | 109               | 110        |
-| 7    | 111         | 112               | 113        |
-| 8    | 114         | 115               | 116        |
-
-Replace *N* in paramKey with the slot number: `modMatrix.1.source`, `modMatrix.3.depth`, etc.
+**Params**: 8 slots — each with `modMatrix.N.source` (0–24), `modMatrix.N.destination` (0–132), `modMatrix.N.depth` (bipolar: raw 128 = 0/no mod, raw 0 = −128, raw 255 = +127). Slot NRPNs: source = 93 + (N−1)×3, dest = 94 + (N−1)×3, depth = 95 + (N−1)×3 → slots 1–8 use NRPNs 93–116. Replace *N* with slot number: `modMatrix.1.source`, `modMatrix.3.depth`, etc.
 
 ## Sources (0–24)
 

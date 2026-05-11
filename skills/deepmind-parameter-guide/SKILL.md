@@ -1,31 +1,18 @@
 ---
 name: deepmind-parameter-guide
 description: >
-  Quick-reference guide for DeepMind 12 parameters, organized by synth area.
-  Read the relevant section before calling set_param / set_params to
-  understand what a parameter does, what values make sense, and what other
-  parameters you should consider setting alongside it.
+  Musical context for the DeepMind 12: what parameters interact, why they
+  matter sonically, and non-obvious techniques. Use when designing sounds or
+  exploring the synth beyond basic parameter setting.
 compatibility: No runtime dependencies. Used as read-only context by agents.
 metadata:
   repo: patchwork-deepmind
-  focus: parameter-knowledge
+  focus: musical-context
 ---
 
-## How to use this skill
+> **MCP note**: `describe_param` returns ranges, units, and enum labels for any parameter. `set_param`/`set_params` accept `value` (0..1), `rawValue`, or `label`. This skill focuses on the *why* and *what it sounds like* — things the tools can't tell you.
 
-When you need to set one or more DeepMind 12 parameters:
-
-1. Identify which synth area the parameter belongs to (oscillators, filter,
-   envelopes, etc.) from the table below.
-2. Read that section file for parameter details, value guidance, and
-   interactions.
-3. Set the parameter(s) with `set_param` or `set_params`:
-   - **Enum params**: use `label` (e.g., `{ param: "env.amp.triggerMode", label: "Loop" }`) — case-insensitive.
-   - **Continuous params**: use `value` (normalized 0..1) or `rawValue` (integer).
-   - Run `describe_param` to see valid labels for any enum param.
-
-If you're designing a specific type of sound, check the "Sound recipes"
-section at the bottom for which sections to read together.
+Start with [recipes.md](sections/recipes.md) for complete sound-design examples, then read individual sections for deeper context on a specific area.
 
 ## Sections
 

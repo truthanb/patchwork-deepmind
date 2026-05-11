@@ -69,4 +69,38 @@ describe('resolveNrpnValue', () => {
       /Provide exactly one/,
     );
   });
+
+  // --- decoded rawMax bridge (FX params with synth-clamped ceilings) ---
+
+  it('rawValue: rejects values above decoded rawMax even when spec rawMax is 255', () => {
+    // rackAmp.drive live-confirmed: synth clamps at raw 40; spec is u8 (0..255)
+    const spec = getParamSpec('fx1.rackAmp.drive');
+    expect(() => resolveNrpnValue('fx1.rackAmp.drive', spec, { rawValue: 41 })).toThrow(
+      /out of range 0\.\.40/,
+    );
+  });
+
+  it('rawValue: accepts the decoded rawMax ceiling itself', () => {
+    const spec = getParamSpec('fx1.rackAmp.drive');
+    const result = resolveNrpnValue('fx1.rackAmp.drive', spec, { rawValue: 40 });
+    expect(result.nrpnValue).toBe(40);
+  });
+
+  it('normalized value: value=1.0 maps to decoded rawMax (40), not spec rawMax (255)', () => {
+    const spec = getParamSpec('fx1.rackAmp.drive');
+    const result = resolveNrpnValue('fx1.rackAmp.drive', spec, { value: 1.0 });
+    expect(result.nrpnValue).toBe(40);
+  });
+
+  it('normalized value: value=0.5 scales against decoded rawMax', () => {
+    const spec = getParamSpec('fx1.rackAmp.drive'); // decoded rawMax=40
+    const result = resolveNrpnValue('fx1.rackAmp.drive', spec, { value: 0.5 });
+    expect(result.nrpnValue).toBe(20); // Math.round(0.5 * 40)
+  });
+
+  it('normalized value: params without decoded rawMax still use spec rawMax', () => {
+    const spec = getParamSpec('filter.cutoff'); // no decoded rawMax override
+    const result = resolveNrpnValue('filter.cutoff', spec, { value: 0.5 });
+    expect(result.nrpnValue).toBe(128); // Math.round(0.5 * 255)
+  });
 });

@@ -11,17 +11,7 @@ emulation (oscillator and parameter drift for vintage character). The
 POLY EDIT menu has three pages: Voice Parameters, Pitch Parameters,
 and Chain Parameters (multi-unit poly chain / keyboard split).
 
-## Parameters — Voice
-
-| Parameter (manual name) | paramKey                    | NRPN | Range  | What it does                                                      |
-|-------------------------|-----------------------------|------|--------|-------------------------------------------------------------------|
-| Polyphony               | `voice.polyphonyMode`       | 85   | 0–12   | Voice allocation mode (see Polyphony Mode table below)            |
-| Unison Detune           | `voice.unisonDetune`        | 87   | 0–255  | Detuning spread across unison voices: ±0.0 cents (0) → ±50.0 cents (255). Default: 0 |
-| Priority                | `voice.priorityMode`        | 84   | 0–2    | Note priority when voices run out (see Priority table below). Default: Last (2) |
-| Env-Trigger             | `voice.envelopeTriggerMode` | 86   | 0–3    | How envelopes trigger on new notes (see Env-Trigger table below). Default: Mono (0) |
-| OSC-Drift               | `voice.drift`               | 88   | 0–255  | Oscillator pitch drift amount, applied to both OSC 1 and OSC 2. Default: 0 |
-| Param-Drift             | `voice.parameterDrift`      | 89   | 0–255  | Parameter drift amount for VCF, resonance, PWM, etc. Default: 0  |
-| Drift-Rate              | `voice.driftRate`            | 90   | 0–255  | Speed of drift modulation: 0 = 25–50 ms, 255 = 2.5–5.0 s. Default: 0 |
+**Params — Voice**: `voice.polyphonyMode`, `voice.unisonDetune`, `voice.priorityMode`, `voice.envelopeTriggerMode`, `voice.drift`, `voice.parameterDrift`, `voice.driftRate` — run `describe_param` on any for ranges.
 
 ### Polyphony Mode values
 
@@ -65,21 +55,7 @@ and Chain Parameters (multi-unit poly chain / keyboard split).
 | 2     | Legato     | Envelope does not re-trigger on overlapping notes; attack restarts only after full release |
 | 3     | One-Shot   | Envelope resets to zero, starts attack; after decay, jumps immediately to release (no sustain phase) |
 
-## Parameters — Pitch
-
-| Parameter (manual name) | paramKey             | NRPN | Range  | What it does                                                       |
-|-------------------------|----------------------|------|--------|--------------------------------------------------------------------|
-| Transpose               | `pitch.transpose`    | —    | 0–96   | Semitone transposition: raw 0 = −48, raw 48 = 0, raw 96 = +48. Default: 0 (no transpose) |
-| Porta-Time              | `portamento.time`    | 34   | 0–255  | Portamento glide time: 0 = 0.00 s (instant), 255 = 10.00 s. Default: 0 |
-| Porta-Mode              | `portamento.mode`    | 35   | 0–13   | Portamento behaviour (see Porta-Mode table below). Default: Normal (0) |
-| Porta-OSC-Bal           | `portamento.balance` | 91   | 0–255  | OSC 1/2 portamento balance: bipolar −128…+127 (raw − 128). Default: 0 |
-| P.Bend Range+           | `pitchBend.upDepth`  | 36   | 0–24   | Pitch wheel upper range in semitones. Bipolar (−24 to +24 in manual). Default: +2 |
-| P.Bend Range−           | `pitchBend.downDepth`| 37   | 0–24   | Pitch wheel lower range in semitones. Bipolar (−24 to +24 in manual). Default: −2 |
-| Global-Tune             | `pitch.globalTune`   | —    | 0–255  | Master tuning offset: raw 0 = −128, raw 128 = centre, raw 255 = +127. Default: 0 (centre) |
-
-> Note: Transpose and Global-Tune are global / menu settings. Their
-> NRPNs are not yet confirmed — they may be menu-only items without
-> edit-buffer equivalents.
+**Params — Pitch**: `portamento.time`, `portamento.mode`, `portamento.balance`, `pitchBend.upDepth`, `pitchBend.downDepth` — run `describe_param` for ranges. `pitch.transpose` and `pitch.globalTune` are menu-only (NRPNs not confirmed).
 
 ### Porta-Mode values
 
@@ -107,22 +83,7 @@ and Chain Parameters (multi-unit poly chain / keyboard split).
 
 ## Parameters — Chain
 
-These are multi-unit configuration settings. They are **not per-program
-parameters** and have no known NRPNs — they are set via the Chain
-Parameters menu and persist globally.
-
-| Parameter (manual name) | paramKey | NRPN | Range | What it does                                            |
-|-------------------------|----------|------|-------|---------------------------------------------------------|
-| Poly-Chain              | —        | —    | 0–1   | Off (0) / On (1). Enables poly chain to downstream units |
-| Program Link            | —        | —    | 0–1   | Off (0) / On (1). Downstream units mirror program changes. Only available when Poly-Chain = On |
-| Key Range               | —        | —    | 0–1   | Off (0) / On (1). Enables keyboard split for this unit  |
-| Range-Lower             | —        | —    | 0–127 | MIDI note for low end of keyboard split                 |
-| Range-Upper             | —        | —    | 0–127 | MIDI note for high end of keyboard split                |
-
-> Note: Poly Chain / keyboard split only works over 5-pin MIDI (not USB
-> or WiFi). The first unit in the chain sends MIDI OUT to the next unit's
-> MIDI IN. For keyboard split, use MIDI THRU (not MIDI OUT) from the
-> second unit to a third.
+Poly-Chain, Key Range, Program Link, Range-Lower, Range-Upper are menu-only global settings (no NRPNs). Poly Chain requires 5-pin MIDI — not USB or WiFi. For keyboard split, route MIDI THRU (not OUT) from the second unit to a third.
 
 ## Value guidance
 

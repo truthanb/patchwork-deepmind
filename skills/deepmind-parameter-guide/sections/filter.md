@@ -6,24 +6,7 @@
 
 The Voltage Controlled Filter (VCF) is a fully analog low-pass filter that shapes the tone of the oscillator/noise mix by cutting higher frequencies. It can operate as a 4-pole (24 dB/oct) or 2-pole (12 dB/oct) filter. Resonance emphasizes the cutoff frequency and can be driven into self-oscillation — uniquely, the DeepMind 12 maintains accurate pitch tracking in self-oscillation, making the filter usable as a polyphonic 3rd oscillator. The High Pass Filter (HPF) sits after the VCA and removes low frequencies from all voices simultaneously.
 
-## Parameters
-
-| Parameter (manual name)              | paramKey                       | NRPN | Range   | What it does                                                    |
-|--------------------------------------|--------------------------------|------|---------|-----------------------------------------------------------------|
-| VCF Frequency                        | `filter.cutoff`                | 39   | 0–255   | Cutoff frequency: 50.0 Hz – 20000.0 Hz. Default: 255 (fully open) |
-| VCF Resonance                        | `filter.resonance`             | 41   | 0–255   | Resonance: 0.0% – 100.0%. Emphasizes cutoff; self-oscillation at high values. Default: 0 |
-| VCF 2-Pole Mode                      | `filter.twoPoleMode`           | 51   | 0–1     | 0 = 4-Pole (24 dB/oct), 1 = 2-Pole (12 dB/oct). Default: 0 (4-Pole) |
-| VCF Envelope Depth                   | `filter.envDepth`              | 42   | 0–255   | VCF Envelope → cutoff modulation amount: 0.0% – 100.0%. Default: 0 |
-| VCF Envelope Polarity (Invert)       | `filter.envPolarity`           | 50   | 0–1     | 0 = Inverted, 1 = Normal. Default: 1 (Normal, panel INVERT LED off) |
-| VCF Envelope Velocity Sensitivity    | `filter.envVelocity`           | 43   | 0–255   | How much key velocity scales VCF envelope depth. Default: 128   |
-| VCF Pitch Bend → Freq               | `filter.pitchBendToCutoff`     | 44   | 0–255   | Pitch bend wheel → cutoff. Forward = brighter, back = darker. Default: 128 |
-| VCF LFO Depth                        | `filter.lfoDepth`              | 45   | 0–255   | LFO → cutoff modulation amount: 0.0% – 100.0%. Default: 0      |
-| VCF LFO Select                       | `filter.lfoSelect`             | 46   | 0–1     | 0 = LFO 1, 1 = LFO 2. Default: 1 (LFO 2)                      |
-| VCF Aftertouch → LFO Depth           | `filter.aftertouchToLfoDepth`  | 47   | 0–255   | Aftertouch scales VCF LFO depth. Default: 0                    |
-| VCF Mod Wheel → LFO Depth            | `filter.modWheelToLfoDepth`    | 48   | 0–255   | Mod wheel scales VCF LFO depth. Default: 0                     |
-| VCF Keyboard Tracking                | `filter.keyTracking`           | 49   | 0–255   | Cutoff follows keyboard pitch: 0.0% – 100.0%. Center = middle C. Default: 0 |
-| VCF Bass Boost                       | `filter.bassBoost`             | 52   | 0–1     | 0 = Off, 1 = On. Analog shelving boost at 100 Hz (+6 dB). Default: 0 |
-| HPF Frequency                        | `filter.hpfCutoff`             | 40   | 0–255   | High-pass cutoff: 20.0 Hz – 2000.0 Hz. Default: 0 (20 Hz, fully open) |
+**Params**: `filter.cutoff`, `filter.resonance`, `filter.twoPoleMode`, `filter.envDepth`, `filter.envPolarity`, `filter.envVelocity`, `filter.pitchBendToCutoff`, `filter.lfoDepth`, `filter.lfoSelect`, `filter.aftertouchToLfoDepth`, `filter.modWheelToLfoDepth`, `filter.keyTracking`, `filter.bassBoost`, `filter.hpfCutoff` — run `describe_param` on any for range, units, and enum labels.
 
 ## Value guidance
 

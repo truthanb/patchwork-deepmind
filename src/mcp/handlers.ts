@@ -33,8 +33,12 @@ export function resolveNrpnValue(
     throw new Error('Provide exactly one of: value (normalized 0..1), rawValue (raw integer), or label (enum string)');
   }
 
+  const info = getParamInfo(resolved);
+  const specRawMax = spec.rawMax ?? 255;
+  const effectiveRawMax =
+    info?.decoded?.rawMax !== undefined ? Math.min(info.decoded.rawMax, specRawMax) : specRawMax;
+
   if (input.label !== undefined) {
-    const info = getParamInfo(resolved);
     if (!info?.enum) throw new Error(`Param ${resolved} is not an enum — cannot use label`);
     const match = info.enum.values.find((v) => v.label.toLowerCase() === input.label!.toLowerCase());
     if (!match) {
@@ -46,16 +50,15 @@ export function resolveNrpnValue(
 
   if (input.rawValue !== undefined) {
     const rawMin = spec.rawMin ?? 0;
-    const rawMax = spec.rawMax ?? 255;
     const raw = Math.round(input.rawValue);
-    if (raw < rawMin || raw > rawMax) {
-      throw new Error(`rawValue ${raw} out of range ${rawMin}..${rawMax} for ${resolved}`);
+    if (raw < rawMin || raw > effectiveRawMax) {
+      throw new Error(`rawValue ${raw} out of range ${rawMin}..${effectiveRawMax} for ${resolved}`);
     }
     return { nrpnValue: raw, displayValue: `raw ${raw}` };
   }
 
-  // Normalized value (existing behavior)
-  const nrpnValue = encodeNormalizedToNrpnValue(spec, input.value!);
+  // Normalized value — scale against effective (decoded) rawMax, not bit-width default
+  const nrpnValue = encodeNormalizedToNrpnValue(spec, input.value!, effectiveRawMax);
   return { nrpnValue, displayValue: input.value!.toFixed(3) };
 }
 
@@ -111,7 +114,13 @@ export async function handleDescribeParam(params: { param: string }): Promise<{
     normalizedMin: number;
     normalizedMax: number;
     ui?: { abbr?: string; name?: string; index?: number };
-    value?: { units?: string; min?: number; max?: number; modDestination?: boolean };
+    value?: {
+      units?: string;
+      min?: number;
+      max?: number;
+      modDestination?: boolean;
+      displayBuckets?: Array<{ rawMin: number; rawMax: number; label: string }>;
+    };
     notes?: string;
     condition?: { field: string; equals: number };
   };

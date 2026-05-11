@@ -6,14 +6,7 @@
 
 The Voltage Controlled Amplifier (VCA) controls the volume of each voice. It has two stages: a **per-voice stereo VCA** modulated by the VCA envelope, velocity, pan spread, and Mod Matrix, and a **common VCA** (Level fader) that sets the overall program volume after all voices are summed. The per-voice VCA is what shapes the amplitude contour of each note; the Level fader compensates for volume differences between programs.
 
-## Parameters
-
-| Parameter (manual name)              | paramKey            | NRPN | Range   | What it does                                                                 |
-|--------------------------------------|---------------------|------|---------|------------------------------------------------------------------------------|
-| VCA Level                            | `vca.level`         | 80   | 0–255   | Overall program volume. Maps to -12.0 dB (0) to +6.0 dB (255). Default: 128 (0.0 dB). |
-| VCA Envelope Depth                   | `vca.envDepth`      | 81   | 0–255   | How much the VCA envelope modulates the per-voice VCA. 0 = envelope has no effect, 255 = full envelope control. Default: 255. |
-| VCA Envelope Velocity Sensitivity    | `vca.envVelocity`   | 82   | 0–255   | How much key velocity affects per-voice VCA level. 0 = velocity ignored (constant volume), 255 = maximum dynamic range. Default: 128. |
-| VCA Pan Spread                       | `vca.panSpread`     | 83   | 0–255   | Stereo spread of individual voices. Display: -128 (raw 0) to +127 (raw 255). Default: 128 (display 0, center). |
+**Params**: `vca.level`, `vca.envDepth`, `vca.envVelocity`, `vca.panSpread` — run `describe_param` on any for ranges and units.
 
 ## Value guidance
 
