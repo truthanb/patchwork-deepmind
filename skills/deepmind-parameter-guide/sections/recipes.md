@@ -6,6 +6,88 @@ Run `describe_param` to see valid labels for any param.
 
 ---
 
+## Electro piano foundation patch
+
+A subtractive analog approximation of electric piano character. OSC 2 hard sync with a high pitch offset simulates the metallic harmonic content of tines. The filter envelope provides the key attack-then-settle shape. This is a starting point for a family of sounds — bright/FM-flavored with filter open, mellower Rhodes-adjacent with it closed.
+
+**Oscillators**
+
+```
+osc1.sawtooth     1 (on)
+osc1.square       1 (on)
+osc1.pwm          0.0          # 50% duty cycle — true square
+osc1.pwmSource    label:"Manual"
+osc1.range        label:"8'"
+osc2.sync         1 (on)       # hard sync to OSC 1 — locks OSC 2 phase
+osc2.pitch        0.68         # pitched well above OSC 1 to simulate tine harmonics
+osc2.toneMod      0.70         # metallic pulse-insert character; key brightness control
+osc2.level        0.85
+osc2.range        label:"8'"
+noise.level       0            # no noise for piano character
+```
+
+**Filter** — start closed and let the envelope do the work
+
+```
+filter.cutoff       0.22       # nearly closed; envelope sweeps from here
+filter.hpfCutoff    0.0        # HPF off
+filter.resonance    0.25       # slight resonance to add shimmer; raise for bell edge
+filter.keyTracking  0.45       # higher notes open filter — mirrors real EP behavior
+filter.envDepth     0.55       # filter envelope drives the brightness transient
+filter.envPolarity  label:"Normal"
+```
+
+**VCA envelope** — instant attack, high decay, sustain lower than decay peak (the "steppy" shape)
+
+```
+env.amp.attack    0.0          # instant — keys sound immediately
+env.amp.decay     0.68         # long fall to sustain
+env.amp.sustain   0.50         # lower than implicit decay peak — sound settles after strike
+env.amp.release   0.08         # very short — keys cut off cleanly
+```
+
+**VCF envelope** — mirrors VCA shape but with a small release tail
+
+```
+env.filter.attack   0.02       # nearly instant filter opening on strike
+env.filter.decay    0.60       # filter closes through note hold
+env.filter.sustain  0.30       # filter stays slightly open while held
+env.filter.release  0.20       # brief brightness tail when key released
+```
+
+**Effects — serial chain (all four slots)**
+
+```
+FX1  T-RayDelay   mix ~0.15   # oil-can analog delay; ambience without wash
+FX2  Chorus        mix ~0.70   # width and shimmer; swap for Phaser or Flanger for different flavor
+FX3  AutoPan                   # gentle movement; keep rate slow
+FX4  FairComp                  # tightens dynamics; makes quiet playing feel physical
+```
+
+**Velocity expression via mod matrix (all three add playing feel)**
+
+```
+Velocity → osc2.toneMod    depth ~+0.30   # harder strike = more metallic upper partials
+Velocity → osc2.pitch      depth ~+0.15   # harder strike = slightly higher tine harmonic
+Velocity → filter.cutoff   depth ~+0.25   # harder strike = brighter initial transient
+```
+
+**Tonal variations** — the key levers once the foundation is set
+
+| Want more of…             | Adjust                                                                 |
+|---------------------------|------------------------------------------------------------------------|
+| Brightness / FM flavor    | Raise `filter.cutoff` and/or `filter.envDepth`                         |
+| Mellow / Rhodes direction | Lower `osc2.pitch` and `filter.cutoff`; reduce `filter.envDepth`       |
+| Tine character             | Raise `osc2.toneMod` or `osc2.pitch`; experiment with `osc2.sync` off |
+| Attack punch               | Lower `env.amp.decay`; raise `filter.envDepth`                         |
+| Longer resonant tail       | Raise `env.amp.release` and `env.filter.release`                       |
+| Tremolo / vibrato          | Enable an LFO → filter cutoff or pitch at slow rate; use LFO delay     |
+| Stereo width               | Swap FX2 Chorus for RotarySpkr or raise AutoPan depth                  |
+
+Read: [oscillators.md](oscillators.md), [filter.md](filter.md), [envelopes.md](envelopes.md), [mod-matrix.md](mod-matrix.md), [effects/delays.md](effects/delays.md), [effects/creative.md](effects/creative.md), [effects/processing.md](effects/processing.md)
+
+---
+
 ## Envelope as complex LFO (loop mode)
 
 `env.amp.triggerMode` label `"Loop"` — envelope cycles ADR continuously, skipping sustain. Use asymmetric curve values (`attackCurve`, `decayCurve`, `releaseCurve`) to shape the cycling waveform into patterns no LFO can produce. All three envelopes support Loop independently.

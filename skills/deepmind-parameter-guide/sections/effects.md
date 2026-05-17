@@ -102,9 +102,17 @@ The manual lists effects 1–35, but the synth's internal `fxN.type` values use 
 
 ## How to set an effect
 
-1. Choose the FX slot (1–4) and set its type NRPN to the **internal type value** from the tables above
-2. Read the detail file for that effect category to learn what each `param.1`–`param.12` controls
-3. Set the individual parameter NRPNs (raw 0–255 values; the detail files show the human-readable ranges)
+1. Choose the FX slot (1–4) and set its type. `fx1.type` **accepts both `rawValue:` and `label:`**:
+   ```
+   fx1.type  label:"T-RayDelay"    # or rawValue: 21
+   ```
+2. Set parameters using either the **typed names** (preferred — self-documenting) or the positional names:
+   ```
+   fx1.tRayDelay.mix  value: 0.15    # same as fx1.param.1 value: 0.15
+   fx1.chorus.mix     value: 0.70    # same as fx2.param.6 value: 0.70
+   ```
+   Typed names (`fxN.<effectName>.<key>`) are full `set_param` targets — not read-only. The `condition` on them is snapshot-display-only and has no effect on writes. Read the detail file to find the key names and their param index order.
+3. The positional names `fxN.param.1`–`fxN.param.12` are always valid as a fallback when you know the index from the detail file.
 
 ## Common patterns
 

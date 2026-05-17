@@ -3,6 +3,7 @@ import { encodeNormalizedToNrpnValue } from '../deepmind/params/codec.js';
 import { getParamSpec, hasParamSpec, type DeepMindParamSpec } from '../deepmind/params/param-spec.js';
 import { NRPN_SPECS } from '../deepmind/nrpn-spec.js';
 import { getParamInfo } from '../deepmind/params/registry.js';
+import { FX_TYPE_VALUE_MAP, listDecodedFieldSpecs } from '../deepmind/decoded-patch-map.js';
 import { patchEditBuffer, snapshotEditBuffer } from '../deepmind/snapshot.js';
 import { getDeepMindTransport } from '../deepmind/transport.js';
 
@@ -283,6 +284,100 @@ export async function handleSendNrpn(params: {
   return {
     success: true,
     message: `Sent NRPN ${params.nrpn} (MSB ${msb}, LSB ${lsb}) with value ${params.value}`,
+  };
+}
+
+export async function handleDescribeFxType(params: { type?: string | number }): Promise<{
+  success: boolean;
+  type?: string;
+  typeValue?: number;
+  paramCount?: number;
+  params?: Array<{
+    index: number | undefined;
+    key: string;
+    settableName: string;
+    abbr: string | undefined;
+    fullName: string | undefined;
+    units: string | undefined;
+    displayMin: number | undefined;
+    displayMax: number | undefined;
+    rawMax: number | undefined;
+    modDestination: boolean | undefined;
+    enum: Array<{ rawValue: number; label: string }> | undefined;
+    notes: string | undefined;
+  }>;
+  usage?: string;
+  availableTypes?: Array<{ typeValue: number; name: string }>;
+}> {
+  // No type argument → list all available effect types
+  if (params.type === undefined || params.type === null || params.type === '') {
+    const availableTypes = Object.entries(FX_TYPE_VALUE_MAP)
+      .filter(([k]) => Number(k) > 0)
+      .map(([k, v]) => ({ typeValue: Number(k), name: v }))
+      .sort((a, b) => a.typeValue - b.typeValue);
+    return { success: true, availableTypes };
+  }
+
+  // Resolve type value from name or number
+  let typeValue: number;
+  let typeName: string;
+
+  if (typeof params.type === 'number' || /^\d+$/.test(String(params.type))) {
+    typeValue = Number(params.type);
+    typeName = FX_TYPE_VALUE_MAP[typeValue] ?? `Unknown(${typeValue})`;
+  } else {
+    const nameToSearch = String(params.type).toLowerCase();
+    const entry = Object.entries(FX_TYPE_VALUE_MAP).find(([, v]) => v.toLowerCase() === nameToSearch);
+    if (!entry) {
+      const available = Object.values(FX_TYPE_VALUE_MAP).join(', ');
+      throw new Error(`Unknown FX type: "${params.type}". Available: ${available}`);
+    }
+    typeValue = Number(entry[0]);
+    typeName = entry[1];
+  }
+
+  // Slot 1 is canonical — all slots share identical param schemas
+  const specs = listDecodedFieldSpecs().filter(
+    (s) => s.condition?.field === 'fx1.type' && s.condition.equals === typeValue,
+  );
+
+  if (specs.length === 0) {
+    throw new Error(
+      `No typed params found for FX type ${typeValue} (${typeName}). The effect may not be mapped yet.`,
+    );
+  }
+
+  const paramList = specs.map((s) => {
+    // s.name = "fx1.chorus.speed" → key = "speed", settableName = "fxN.chorus.speed"
+    const parts = s.name.split('.');
+    const key = parts.slice(2).join('.');
+    const settableName = `fxN.${parts.slice(1).join('.')}`;
+    return {
+      index: s.ui?.index,
+      key,
+      settableName,
+      abbr: s.ui?.abbr,
+      fullName: s.ui?.name,
+      units: s.value?.units,
+      displayMin: s.value?.min,
+      displayMax: s.value?.max,
+      rawMax: s.value?.rawMax,
+      modDestination: s.value?.modDestination,
+      enum: s.valueMap
+        ? Object.entries(s.valueMap).map(([k, v]) => ({ rawValue: Number(k), label: v }))
+        : undefined,
+      notes: s.notes,
+    };
+  });
+
+  const exampleName = `fx1.${specs[0].name.split('.').slice(1).join('.')}`;
+  return {
+    success: true,
+    type: typeName,
+    typeValue,
+    paramCount: specs.length,
+    params: paramList,
+    usage: `Replace N in settableName with slot number 1–4. E.g. "${exampleName}"`,
   };
 }
 

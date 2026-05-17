@@ -109,6 +109,22 @@ export const toolDefinitions = [
     },
   },
   {
+    name: 'describe_fx_type',
+    description:
+      'Describe the parameters of a DeepMind FX effect type by name or internal type number. With no argument, lists all 35 available effect types and their internal values. With a type, returns the full param schema: settable names (fxN.<effect>.<key>), display units, min/max, enum labels, and mod-destination flags. Use this to plan FX configuration without loading the effect first.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        type: {
+          description:
+            'Effect type name (e.g. "Chorus", "T-RayDelay", "HallRev") or internal type number (e.g. 10, 21, 1). Omit to list all available types.',
+          oneOf: [{ type: 'string' }, { type: 'number' }],
+        },
+      },
+      required: [],
+    },
+  },
+  {
     name: 'patch_edit_buffer',
     description:
       'Read the current edit buffer via sysex, apply one or more byte-level patches, and write the full buffer back. Bypasses NRPN — use this when set_param fails for certain parameters (e.g., FX params). Each patch is an offset + raw value (0–255).',

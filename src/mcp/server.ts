@@ -13,6 +13,7 @@ import { toolDefinitions } from './tools.js';
 import {
   handleDescribeNrpn,
   handleDescribeParam,
+  handleDescribeFxType,
   handleSetParam,
   handleSetParams,
   handleSnapshotState,
@@ -84,6 +85,9 @@ function createServer(): Server {
           break;
         case 'send_nrpn':
           result = await handleSendNrpn(args as { nrpn: number; value: number; synthId?: string });
+          break;
+        case 'describe_fx_type':
+          result = await handleDescribeFxType(args as { type?: string | number });
           break;
         case 'patch_edit_buffer':
           result = await handlePatchEditBuffer(

@@ -62,6 +62,7 @@ Read [recipes.md](sections/recipes.md) for full examples with values.
 | Mod wheel → FX params | Mod Wheel → dest 115/119 via mod matrix | Real-time performance control over effect character | [mod-matrix](sections/mod-matrix.md) |
 | LFO delay staging | `lfo*.delayTime` | First 40% silent, then fade-in; stagger LFO 1 vs 2 for layered onset | [lfos](sections/lfos.md) |
 | Self-oscillating filter tracking | `filter.keyTracking` = 255 + high resonance | Filter becomes pitch-accurate 3rd oscillator across keyboard | [filter](sections/filter.md) |
+| Electro piano tines | `osc2.sync` on + high `osc2.pitch` + high `osc2.toneMod` + filter/amp envelope "steppy" shape | OSC 2 hard sync simulates metallic tine harmonics; envelope shape mimics attack-then-settle | [recipes](sections/recipes.md) |
 
 ## See also
 
