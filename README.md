@@ -37,6 +37,7 @@ Add to your MCP client config (Claude Desktop, VS Code, etc.):
 | `set_params` | Batch-set multiple parameters in one call |
 | `describe_param` | Look up a parameter's NRPN, range, units, enum labels, and notes |
 | `describe_nrpn` | Search/list raw NRPN parameters |
+| `describe_fx_type` | List all 35 FX effect types, or get the full param schema for one (settable names, units, min/max, enums) — without needing a snapshot or loading the effect first |
 | `snapshot_state` | Read current patch state via SysEx edit-buffer dump |
 | `send_nrpn` | Send a raw NRPN message by number and value |
 | `patch_edit_buffer` | Read, patch, and write-back raw edit-buffer bytes (use for FX params when set_param can't reach them) |
